@@ -1,8 +1,8 @@
 use crate::notifier::{NotifierHandle, NotifierMsg};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
-use tokio::sync::mpsc;
 use tokio::time::{self, Duration};
+use tokio::{sync::mpsc, task::JoinHandle};
 
 // TODO: Find out whether we need a way to shut down the interval.
 /// Starts a `tokio::time::interval` which periodically sends a message to `Checker` with the name
@@ -105,7 +105,7 @@ impl Checker {
 // Don't strictly need a handle at the moment as we have nothing external that will be sending
 // messages to `Checker`.
 pub struct CheckerHandle {
-    sender: mpsc::Sender<CheckerMsg>,
+    pub join_handle: JoinHandle<()>,
 }
 
 impl CheckerHandle {
@@ -124,13 +124,15 @@ impl CheckerHandle {
             .collect();
 
         let mut checker = Checker::new(client, notifier, rx, services);
-        tokio::spawn(async move { checker.run().await });
+        let handle = tokio::spawn(async move { checker.run().await });
 
         for (name, interval) in intervals {
             start_check_interval(name, interval, tx.clone());
         }
 
-        Self { sender: tx }
+        Self {
+            join_handle: handle,
+        }
     }
 }
 
@@ -142,6 +144,6 @@ pub enum Status {
 
 // Move somewhere else
 pub struct Service {
-    url: String,
-    interval: u64,
+    pub url: String,
+    pub interval: u64,
 }
