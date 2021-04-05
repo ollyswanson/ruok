@@ -1,3 +1,8 @@
+//! Periodically make an HTTP GET request to each [`Service`]. If the service responds with 200 OK
+//! then the service is considered to be up, otherwise it is considered to be down. If the
+//! [`Status`] of the service has changed then a message is sent to [`NotifierHandle`] with the
+//! name of the service and the new status.
+
 use crate::notifier::{NotifierHandle, NotifierMsg};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -110,7 +115,7 @@ pub struct CheckerHandle {
 
 impl CheckerHandle {
     /// Constructs the `Checker` and then starts the timer intervals that send messages to
-    /// `Checker` prompting it to reach out to the specified services using client.
+    /// `Checker` prompting it to reach out to the specified services using the `client`.
     pub fn new(
         client: reqwest::Client,
         notifier: NotifierHandle,
@@ -123,6 +128,8 @@ impl CheckerHandle {
             .map(|(name, service)| (name.clone(), service.interval))
             .collect();
 
+        // Start the checker before starting the intervals as each interval will send a message
+        // immediately upon construction.
         let mut checker = Checker::new(client, notifier, rx, services);
         let handle = tokio::spawn(async move { checker.run().await });
 
