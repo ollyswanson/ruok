@@ -143,6 +143,7 @@ impl CheckerHandle {
     }
 }
 
+// TODO: Implement Format
 #[derive(Eq, PartialEq, Clone, Copy)]
 pub enum Status {
     Up,

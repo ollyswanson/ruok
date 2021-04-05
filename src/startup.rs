@@ -18,7 +18,7 @@ pub async fn startup() {
     services.insert(
         "localhost".into(),
         Service {
-            url: "http://localhost:8000/health_check".into(),
+            url: "http://localhost:3000/health_check".into(),
             interval: 2,
         },
     );

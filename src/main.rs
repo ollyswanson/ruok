@@ -1,4 +1,4 @@
 #[tokio::main]
 async fn main() {
-    ruok::startup().await;
+    ruok::startup::startup().await;
 }

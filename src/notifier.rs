@@ -2,6 +2,7 @@
 //!
 //! Receives a message to send a notification and then sends the appropriate notification.
 use crate::checker::Status;
+use crate::notifications::Notification;
 use tokio::sync::mpsc;
 
 #[derive(Clone)]
