@@ -673,6 +673,7 @@ name = "ruok"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "once_cell",
  "reqwest",
  "serde",
  "tokio",
