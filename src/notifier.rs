@@ -59,5 +59,19 @@ pub struct NotifierHandle {
 }
 
 impl NotifierHandle {
-    pub fn new() -> Self {}
+    pub fn new(
+        client: reqwest::Client,
+        services: &'static HashMap<String, Service>,
+        notifications: &'static HashMap<String, Notification>,
+    ) -> Self {
+        // TODO: Find a suitable bound for the channel.
+        let (tx, rx) = mpsc::channel(32);
+        let mut notifier = Notifier::new(client, rx, services, notifications);
+
+        tokio::spawn(async move {
+            notifier.run().await;
+        });
+
+        Self { sender: tx }
+    }
 }

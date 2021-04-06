@@ -1,8 +1,10 @@
 use crate::checker::Status;
 use std::collections::HashMap;
 
+#[derive(Clone, Debug)]
 pub struct SlackNotification {
-    url: String,
+    // FIX: Remove pub once we've created a deserialize for Self
+    pub url: String,
 }
 
 impl SlackNotification {

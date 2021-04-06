@@ -1,15 +1,15 @@
 use crate::checker::{CheckerHandle, Service};
+use crate::notifications::{Notification, SlackNotification};
 use crate::notifier::NotifierHandle;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
-use tokio::sync::mpsc;
 
 static SERVICES: OnceCell<HashMap<String, Service>> = OnceCell::new();
+static NOTIFICATIONS: OnceCell<HashMap<String, Notification>> = OnceCell::new();
 
 pub async fn startup() {
     let client = reqwest::Client::new();
     // arbitrary channel size based on Tokio tutorial.
-    let (tx, rx) = mpsc::channel(32);
 
     let mut services = HashMap::new();
     services.insert(
@@ -21,9 +21,22 @@ pub async fn startup() {
         },
     );
 
-    SERVICES.set(services).unwrap();
+    let mut notifications = HashMap::new();
+    notifications.insert(
+        "test".into(),
+        Notification::Slack(SlackNotification {
+            url: "http://localhost:3000/slack".into(),
+        }),
+    );
 
-    let notifier = NotifierHandle { sender: tx };
-    let checker = CheckerHandle::new(client, notifier, SERVICES.get().unwrap());
+    SERVICES.set(services).unwrap();
+    NOTIFICATIONS.set(notifications).unwrap();
+
+    let notifier = NotifierHandle::new(
+        client.clone(),
+        SERVICES.get().unwrap(),
+        NOTIFICATIONS.get().unwrap(),
+    );
+    let checker = CheckerHandle::new(client.clone(), notifier, SERVICES.get().unwrap());
     checker.join_handle.await.unwrap();
 }
