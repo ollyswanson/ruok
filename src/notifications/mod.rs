@@ -1,3 +1,5 @@
+use crate::checker::Status;
+
 mod slack;
 pub use slack::SlackNotification;
 
@@ -7,7 +9,16 @@ pub enum Notification {
 }
 
 impl Notification {
-    pub fn notify(&self) {
+    pub fn notify(&'static self, client: reqwest::Client, name: &'static str, status: Status) {
+        // REMOVE
         println!("notification");
+
+        match self {
+            Self::Slack(notification) => {
+                tokio::spawn(async move {
+                    notification.notify(client, name, status).await;
+                });
+            }
+        }
     }
 }

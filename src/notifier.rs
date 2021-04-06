@@ -48,7 +48,7 @@ impl Notifier {
             let notification = self.notifications.get(notif_name).unwrap();
 
             // Delegating the spawning of threads to the notifications
-            notification.notify();
+            notification.notify(self.client.clone(), name, status);
         }
     }
 }
