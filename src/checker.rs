@@ -3,6 +3,7 @@
 //! [`Status`] of the service has changed then a message is sent to [`NotifierHandle`] with the
 //! name of the service and the new status.
 
+use crate::config::Service;
 use crate::notifier::{NotifierHandle, NotifierMsg};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -80,7 +81,7 @@ impl Checker {
             // Ok to unwrap, should never receive the name of a service that does not exist.
             let url = &services.get(name).unwrap().url;
             // for now we will produce a Status::Down for all other responses / errors.
-            let status = match client.get(url).send().await {
+            let status = match client.get(url.clone()).send().await {
                 Ok(res) if res.status() == 200 => Status::Up,
                 _ => Status::Down,
             };
@@ -146,12 +147,4 @@ impl CheckerHandle {
 pub enum Status {
     Up,
     Down,
-}
-
-// Move somewhere else
-#[derive(Clone, Debug)]
-pub struct Service {
-    pub url: String,
-    pub interval: u64,
-    pub notifications: Vec<String>,
 }

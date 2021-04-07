@@ -1,10 +1,11 @@
 use crate::checker::Status;
+use reqwest::Url;
+use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct SlackNotification {
-    // FIX: Remove pub once we've created a deserialize for Self
-    pub url: String,
+    pub url: Url,
 }
 
 impl SlackNotification {
@@ -12,7 +13,7 @@ impl SlackNotification {
         let payload = self.build_payload(name, status);
 
         // TODO: Do something with the Result
-        let _ = client.post(&self.url).json(&payload).send().await;
+        let _ = client.post(self.url.clone()).json(&payload).send().await;
     }
 
     // TODO: Make the notification much nicer.

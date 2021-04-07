@@ -1,8 +1,10 @@
-use crate::checker::{CheckerHandle, Service};
+use crate::checker::CheckerHandle;
+use crate::config::Service;
 use crate::notifications::{Notification, SlackNotification};
 use crate::notifier::NotifierHandle;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
+use url::Url;
 
 static SERVICES: OnceCell<HashMap<String, Service>> = OnceCell::new();
 static NOTIFICATIONS: OnceCell<HashMap<String, Notification>> = OnceCell::new();
@@ -15,7 +17,7 @@ pub async fn startup() {
     services.insert(
         "localhost".into(),
         Service {
-            url: "http://localhost:3000/health_check".into(),
+            url: Url::parse("http://localhost:3000/health_check").unwrap(),
             interval: 2,
             notifications: vec!["test".into()],
         },
@@ -25,7 +27,7 @@ pub async fn startup() {
     notifications.insert(
         "test".into(),
         Notification::Slack(SlackNotification {
-            url: "http://localhost:3000/slack".into(),
+            url: Url::parse("http://localhost:3000/slack").unwrap(),
         }),
     );
 

@@ -1,8 +1,8 @@
 //! # Notifier
 //!
 //! Receives a message to send a notification and then sends the appropriate notification.
-use crate::checker::Service;
 use crate::checker::Status;
+use crate::config::Service;
 use crate::notifications::Notification;
 use std::collections::HashMap;
 use tokio::sync::mpsc;
