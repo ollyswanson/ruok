@@ -5,7 +5,7 @@ an attempt at the actor model.
 
 ## Configuration
 
-(Syntax / terminology inspired by `docker-compose`)
+Syntax / terminology inspired by `docker-compose`
 
 ### Basic example
 
@@ -35,9 +35,9 @@ The application can be run with the command `ruok ./config.yaml`
 
 ## Todo
 
-- [] Basic authentication for the services.
-- [] Better error handling.
-- [] Add integration tests using something like `mockito.`
-- [] Better documentation.
-- [] Logging.
-- [] More types of notifications.
+- [ ] Basic authentication for the services.
+- [ ] Better error handling.
+- [ ] Add integration tests using something like `mockito.`
+- [ ] Better documentation.
+- [ ] Logging.
+- [ ] More types of notifications.
