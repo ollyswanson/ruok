@@ -59,21 +59,21 @@ mod test {
         let yaml = r#"
             services:
                 s1:
-                    url: "http://localhost:3000/health_check"
+                    url: http://localhost:3000/health_check
                     interval: 2
                     notifications: [n1, n2]
                 s2:
-                    url: "http://localhost:3001/health_check"
+                    url: http://localhost:3001/health_check
                     interval: 3
                     notifications: [n1, n2]
 
             notifications:
                 n1:
                     type: slack
-                    url: "http://localhost:3000/slack"
+                    url: http://localhost:3000/slack
                 n2:
                     type: slack
-                    url: "http://localhost:3001/slack"
+                    url: http://localhost:3001/slack
             "#;
 
         let cursor = Cursor::new(yaml.as_bytes());
@@ -100,14 +100,14 @@ mod test {
         let yaml = r#"
             services:
                 s1:
-                    url: "http://localhost:3000/health_check"
+                    url: http://localhost:3000/health_check
                     interval: 2
                     notifications: [n1, n2]
 
             notifications:
                 n1:
                     type: slack
-                    url: "http://localhost:3000/slack"
+                    url: http://localhost:3000/slack
             "#;
         let cursor = Cursor::new(yaml.as_bytes());
 

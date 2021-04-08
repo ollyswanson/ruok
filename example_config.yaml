@@ -1,0 +1,10 @@
+services:
+  s1:
+    url: http://localhost:3000/health_check
+    interval: 2
+    notifications: [n1]
+
+notifications:
+  n1:
+    type: slack
+    url: http://localhost:3000/slack

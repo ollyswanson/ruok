@@ -8,10 +8,9 @@ use std::io::BufReader;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opts: Opts = Opts::parse();
-    let f = File::open(opts.input)?;
-    let f = BufReader::new(f);
+    let f = BufReader::new(File::open(opts.input)?);
     let config = Config::new(f)?;
-    startup::startup().await;
 
+    startup::startup(config).await;
     Ok(())
 }

@@ -9,7 +9,7 @@ pub struct SlackNotification {
 }
 
 impl SlackNotification {
-    pub async fn notify(&self, client: reqwest::Client, name: &'static str, status: Status) {
+    pub async fn send(&self, client: reqwest::Client, name: &'static str, status: Status) {
         let payload = self.build_payload(name, status);
 
         // TODO: Do something with the Result

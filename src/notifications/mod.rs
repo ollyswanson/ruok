@@ -12,14 +12,14 @@ pub enum Notification {
 }
 
 impl Notification {
-    pub fn notify(&'static self, client: reqwest::Client, name: &'static str, status: Status) {
+    pub fn send(&'static self, client: reqwest::Client, name: &'static str, status: Status) {
         // REMOVE
         println!("notification");
 
         match self {
             Self::Slack(notification) => {
                 tokio::spawn(async move {
-                    notification.notify(client, name, status).await;
+                    notification.send(client, name, status).await;
                 });
             }
         }
