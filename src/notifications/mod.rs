@@ -1,4 +1,5 @@
 use crate::checker::Status;
+use reqwest::Client;
 use serde::Deserialize;
 
 mod slack;
@@ -12,10 +13,7 @@ pub enum Notification {
 }
 
 impl Notification {
-    pub fn send(&'static self, client: reqwest::Client, name: &'static str, status: Status) {
-        // REMOVE
-        println!("notification");
-
+    pub fn send(&'static self, client: Client, name: &'static str, status: Status) {
         match self {
             Self::Slack(notification) => {
                 tokio::spawn(async move {

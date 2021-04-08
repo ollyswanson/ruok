@@ -1,5 +1,5 @@
 use crate::checker::Status;
-use reqwest::Url;
+use reqwest::{Client, Url};
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -9,7 +9,7 @@ pub struct SlackNotification {
 }
 
 impl SlackNotification {
-    pub async fn send(&self, client: reqwest::Client, name: &'static str, status: Status) {
+    pub async fn send(&self, client: Client, name: &'static str, status: Status) {
         let payload = self.build_payload(name, status);
 
         // TODO: Do something with the Result

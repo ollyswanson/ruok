@@ -1,10 +1,13 @@
+//! # Checker
+//!
 //! Periodically make an HTTP GET request to each [`Service`]. If the service responds with 200 OK
 //! then the service is considered to be up, otherwise it is considered to be down. If the
 //! [`Status`] of the service has changed then a message is sent to [`NotifierHandle`] with the
 //! name of the service and the new status.
 
-use crate::config::Service;
 use crate::notifier::{NotifierHandle, NotifierMsg};
+use crate::service::Service;
+use reqwest::Client;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use tokio::time::{self, Duration};
@@ -28,20 +31,27 @@ fn start_check_interval(name: &'static str, interval: u64, send: mpsc::Sender<Ch
 }
 
 struct Checker {
-    client: reqwest::Client,
+    client: Client,
+    /// Handle of the `Notifier` actor
     notifier: NotifierHandle,
+    /// Receives the messages sent by the timer intervals
     receiver: mpsc::Receiver<CheckerMsg>,
+    /// List of services to check.
     services: &'static HashMap<String, Service>,
+    /// Tracks the [`Status`] of each [`Service`], if the status changes then a message will be
+    /// sent to the `Notifer` actor.
     statuses: Arc<Mutex<HashMap<String, Status>>>,
 }
 
 enum CheckerMsg {
+    /// Message sent by a spawned interval to [`Checker`] telling it to check the status of the
+    /// specified service.
     CheckService(&'static str),
 }
 
 impl Checker {
     fn new(
-        client: reqwest::Client,
+        client: Client,
         notifier: NotifierHandle,
         receiver: mpsc::Receiver<CheckerMsg>,
         services: &'static HashMap<String, Service>,
@@ -106,8 +116,9 @@ impl Checker {
     }
 }
 
-// Don't strictly need a handle at the moment as we have nothing external that will be sending
-// messages to `Checker`.
+// TODO: CheckerHandle differs in purpose from NotifierHandle despite sharing a similar name, have
+// a think about a better way to describe it.
+/// Contains a [`JoinHandle`] to be awaited when starting the main loop for the application.
 pub struct CheckerHandle {
     pub join_handle: JoinHandle<()>,
 }
@@ -116,11 +127,11 @@ impl CheckerHandle {
     /// Constructs the `Checker` and then starts the timer intervals that send messages to
     /// `Checker` prompting it to reach out to the specified services using the `client`.
     pub fn new(
-        client: reqwest::Client,
+        client: Client,
         notifier: NotifierHandle,
         services: &'static HashMap<String, Service>,
     ) -> Self {
-        // Arbitrary size, need to do more investigation of what is appropriate.
+        // TODO: Find a more suitable bound for the channel.
         let (tx, rx) = mpsc::channel(32);
         let intervals: Vec<_> = services
             .iter()
@@ -142,7 +153,8 @@ impl CheckerHandle {
     }
 }
 
-// TODO: Implement Format
+/// Status of a service, if the endpoint returns and OK 200 then the `Status` is `Up`, otherwise it
+/// is `Down`
 #[derive(Eq, PartialEq, Clone, Copy)]
 pub enum Status {
     Up,

@@ -1,14 +1,16 @@
 //! # Notifier
 //!
-//! Receives a message to send a notification and then sends the appropriate notification.
+//! Responsible for receiving messages from `Checker` and sending the corresponding
+//! [`Notification`]
 use crate::checker::Status;
-use crate::config::Service;
 use crate::notifications::Notification;
+use crate::service::Service;
+use reqwest::Client;
 use std::collections::HashMap;
 use tokio::sync::mpsc;
 
 struct Notifier {
-    client: reqwest::Client,
+    client: Client,
     receiver: mpsc::Receiver<NotifierMsg>,
     services: &'static HashMap<String, Service>,
     notifications: &'static HashMap<String, Notification>,
@@ -20,7 +22,7 @@ pub enum NotifierMsg {
 
 impl Notifier {
     fn new(
-        client: reqwest::Client,
+        client: Client,
         receiver: mpsc::Receiver<NotifierMsg>,
         services: &'static HashMap<String, Service>,
         notifications: &'static HashMap<String, Notification>,
@@ -60,7 +62,7 @@ pub struct NotifierHandle {
 
 impl NotifierHandle {
     pub fn new(
-        client: reqwest::Client,
+        client: Client,
         services: &'static HashMap<String, Service>,
         notifications: &'static HashMap<String, Notification>,
     ) -> Self {

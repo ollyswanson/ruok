@@ -1,16 +1,8 @@
 use crate::notifications::Notification;
+use crate::service::Service;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::io::BufRead;
-use url::Url;
-
-// TODO: Find a better home for me.
-#[derive(Clone, Debug, Deserialize, PartialEq)]
-pub struct Service {
-    pub url: Url,
-    pub interval: u64,
-    pub notifications: Vec<String>,
-}
 
 #[derive(Deserialize)]
 struct UncheckedConfig {
@@ -52,7 +44,9 @@ impl Config {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::service::Service;
     use std::io::Cursor;
+    use url::Url;
 
     #[test]
     fn should_deserialize_unchecked() {
