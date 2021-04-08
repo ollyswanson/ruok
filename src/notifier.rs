@@ -49,7 +49,6 @@ impl Notifier {
         for notif_name in &self.services.get(name).unwrap().notifications {
             let notification = self.notifications.get(notif_name).unwrap();
 
-            // Delegating the spawning of threads to the notifications
             notification.send(self.client.clone(), name, status);
         }
     }

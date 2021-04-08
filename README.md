@@ -5,7 +5,7 @@ an attempt at the actor model.
 
 ## Configuration
 
-Syntax / terminology inspired by `docker-compose`
+Syntax / terminology inspired by `docker-compose`.
 
 ### Basic example
 
@@ -34,7 +34,7 @@ notifications:
 
 ## Run
 
-The application can be run with the command `ruok ./config.yaml`
+The application can be run with the command `ruok ./config.yaml`.
 
 ## Todo
 
