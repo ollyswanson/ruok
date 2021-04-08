@@ -111,6 +111,7 @@ mod test {
             "#;
         let cursor = Cursor::new(yaml.as_bytes());
 
+        // TODO: update the test to check the type of error once the boxed error has been replaced.
         assert!(Config::new(cursor).is_err());
     }
 }
