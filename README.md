@@ -25,7 +25,7 @@ services:
     interval: 258
     notifications: [notification_1]
 
-# Where and how to send notifications
+# Specify type of notification (only Slack for now but more can be added)
 notifications:
   notification_1:
     type: slack
