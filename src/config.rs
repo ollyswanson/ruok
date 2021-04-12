@@ -30,7 +30,7 @@ impl Config {
                 .iter()
                 .any(|notification| unchecked.notifications.get(notification).is_none())
             {
-                return Err(format!("Service: {} has undefined notification", name))?;
+                return Err(format!("Service: {} has undefined notification", name).into());
             }
         }
 
