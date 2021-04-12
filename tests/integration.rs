@@ -5,15 +5,6 @@ use ruok::startup;
 use std::io::Cursor;
 use tokio::time::{self, Duration};
 
-macro_rules! advance_time {
-    ($a: expr) => {{
-        tokio::time::advance(tokio::time::Duration::from_millis($a - 10u64)).await;
-        tokio::time::resume();
-        tokio::time::sleep(tokio::time::Duration::from_millis(10)).await;
-        tokio::time::pause();
-    }};
-}
-
 #[tokio::test]
 async fn integration() {
     let server = MockServer::start();
@@ -48,11 +39,8 @@ async fn integration() {
     });
 
     // Allow some time to pass so that requests etc are sent and received by mock server.
-    time::sleep(Duration::from_millis(10)).await;
-    // From here we will pause time and advance the clock with the tools tokio provides, unfreezing
-    // and sleeping for a small amount of time to allow interaction with the mock server.
-    time::pause();
-
+    time::sleep(Duration::from_millis(250)).await;
+    //
     // services are both checked as soon as the intervals start.
     s1.assert_hits(1);
     s2.assert_hits(1);
@@ -69,15 +57,15 @@ async fn integration() {
         then.status(200);
     });
 
-    // 1 second has passed.
-    advance_time!(1000);
+    // 1.25 seconds passed
+    time::sleep(Duration::from_secs(1)).await;
     // 1 second has passed so s1 should have been checked a second time.
     s1.assert_hits(2);
     // s2 has a 2 second interval so it won't have been checked again yet.
     s2.assert_hits(0);
 
-    // 2 seconds have passed.
-    advance_time!(1000);
+    // 2.25 seconds passed.
+    time::sleep(Duration::from_secs(1)).await;
     s1.assert_hits(3);
     // 2 seconds have passed so s2 should be being checked for a second time.
     s2.assert_hits(1);
@@ -94,8 +82,8 @@ async fn integration() {
         then.status(404);
     });
 
-    // 3 seconds have passed.
-    advance_time!(1000);
+    // 3.25 seconds have passed.
+    time::sleep(Duration::from_secs(1)).await;
     // count has reset.
     s1.assert_hits(1);
     s2.assert_hits(1);
@@ -111,8 +99,8 @@ async fn integration() {
         then.status(200);
     });
 
-    // 4 seconds have passed.
-    advance_time!(1000);
+    // 4.25 seconds have passed.
+    time::sleep(Duration::from_secs(1)).await;
     s1.assert_hits(1);
     s2.assert_hits(2);
     n1.assert_hits(2);
