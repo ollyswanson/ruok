@@ -16,6 +16,7 @@ struct Notifier {
     notifications: &'static HashMap<String, Notification>,
 }
 
+#[derive(Clone, Debug, PartialEq)]
 pub enum NotifierMsg {
     Notify { name: &'static str, status: Status },
 }

@@ -155,7 +155,7 @@ impl CheckerHandle {
 
 /// Status of a service, if the endpoint returns and OK 200 then the `Status` is `Up`, otherwise it
 /// is `Down`
-#[derive(Eq, PartialEq, Clone, Copy)]
+#[derive(Eq, PartialEq, Clone, Copy, Debug)]
 pub enum Status {
     Up,
     Down,
