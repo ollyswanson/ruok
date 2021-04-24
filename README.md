@@ -19,7 +19,7 @@ services:
     url: http://localhost:3000/health_check
     # Time interval in seconds (will improve granularity soon)
     interval: 5
-    notfications: [notification_1]
+    notifications: [notification_1]
   smooth:
     url: http://localhost:3000/annie
     interval: 258
